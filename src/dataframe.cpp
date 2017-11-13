@@ -7,10 +7,16 @@
 
 using namespace std;
 
+
+/*******************************************
+********* Constructs and Destructs *********
+*******************************************/
+
 cdf::DataFrame::DataFrame ( string _fileName, char _delimiter )
 {
 	// Open CSV file
 	ifstream csvFile(_fileName);
+	dfFileName = _fileName;
 	// Check whether state of stream is not good
 	if (!csvFile.good())
 	{
@@ -44,10 +50,13 @@ cdf::DataFrame::DataFrame ( string _fileName, char _delimiter )
 			header += (*i);
 	}
 
+	// Start the saving data
 	size_t dfDimensionY = 0;
+	// References
 	string &fileLine = headersLine;
 	string &line = header;
-	std::string::size_type sz;     // alias of size_t
+	// Alias of size_t
+	std::string::size_type sz;
 	double value;
 	while ( getline(csvFile, fileLine) )
 	{
@@ -75,25 +84,54 @@ cdf::DataFrame::DataFrame ( string _fileName, char _delimiter )
 				line += (*i);
 		}
 	}
+	// Save dimension Y
 	dfDimension[1] = dfDimensionY;
 
 	debugging();
 }
 
 
+/***************************
+********* Operator *********
+***************************/
+cdf::DataFrame::DataFrameVector cdf::DataFrame::operator[] ( size_t _idx )
+{
+	return DataFrameVector( *this, _idx, DataFrameVector::LINE );
+}
+cdf::DataFrame::DataFrameVector cdf::DataFrame::operator[] ( string _idx )
+{
+	return DataFrameVector( *this, _idx, DataFrameVector::COLUMN );
+}
+
+
+/*************************
+********* Others *********
+*************************/
 void cdf::DataFrame::debugging ()
 {
-	cout << "--X: " << dfDimension[0] << endl;
-	cout << "--Y: " << dfDimension[1] << endl;
+	cout << dfFileName << " " << dfDimension[0] << "x" << dfDimension[1] << endl;
 	// DEBUGGING
-	cout << "--Headers: ";
+	cout << ".Headers: ";
 	for (size_t i = 0; i < dfHeaders.size(); i++)
 		cout << dfHeaders[i] << ";";
-	cout << endl << "--Data: " << endl;
+	cout << endl << ".Data: " << endl;
 	for (size_t i = 0; i < dfDimension[1]; i++)
 	{
 		for (size_t j = 0; j < dfDimension[0]; j++)
 			cout << dfData[i][j] << ";";
 		cout << endl;
 	}
+}
+
+
+/**********************************
+********* DataFrameVector *********
+**********************************/
+reference cdf::DataFrame::DataFrameVector::operator[] ( int _idx )
+{
+    return dfParent.dfData[idx][_idx];
+}
+reference cdf::DataFrame::DataFrameVector::operator[] ( string _idx )
+{
+    return dfParent.dfData[idx][_idx];
 }
