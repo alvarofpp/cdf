@@ -15,16 +15,18 @@ namespace cdf
 	class DataFrame
 	{
 		private:
-			string fileName;                  // Filename
-			size_t dimension[2];              // Dimensions X and Y
-			vector< string > headers;         // CSV File headers
-			vector< vector< double > > data;  // CSV File data
+			string dfFileName;                  // Filename
+			size_t dfDimension[2];              // Dimensions X and Y
+			vector< string > dfHeaders;         // CSV File headers
+			vector< vector< double > > dfData;  // CSV File data
 		public:
 			/*
 			* Constructs and Destructs
 			*/
 			DataFrame ( string _fileName, char _delimiter = ',' );
 			~DataFrame () = default;
+		private:
+			void debugging ();
 	};
 }
 
