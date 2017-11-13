@@ -15,10 +15,10 @@ namespace cdf
 	class DataFrame
 	{
 		private:
-			string fileName; // Filename
-			size_t dimension[2]; // Dimensions X and Y
-			vector< string > headers; // CSV File headers
-			vector< vector< double > > data; // CSV File data
+			string fileName;                  // Filename
+			size_t dimension[2];              // Dimensions X and Y
+			vector< string > headers;         // CSV File headers
+			vector< vector< double > > data;  // CSV File data
 		public:
 			/*
 			* Constructs and Destructs

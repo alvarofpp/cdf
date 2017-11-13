@@ -25,8 +25,16 @@ cdf::DataFrame::DataFrame ( string _fileName, char _delimiter )
 	headers.reserve( countDelimiters+1 );
 	for (auto i = headersLine.begin(); i < headersLine.end(); i++)
 	{
-		if ((*i) == _delimiter || i == headersLine.end()-1)
+		// EXAMPLE1, EXAMPLE2, example3
+		if ((*i) == _delimiter)
 		{
+			headers.push_back(header);
+			header = "";
+		}
+		// example1, example2, EXAMPLE3
+		else if (i == headersLine.end()-1)
+		{
+			header += (*i);
 			headers.push_back(header);
 			header = "";
 		}
