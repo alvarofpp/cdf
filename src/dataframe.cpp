@@ -94,19 +94,38 @@ cdf::DataFrame::DataFrame ( string _fileName, char _delimiter )
 /***************************
 ********* Operator *********
 ***************************/
+
 cdf::DataFrame::DataFrameVector cdf::DataFrame::operator[] ( size_t _idx )
 {
 	return DataFrameVector( *this, _idx, DataFrameVector::LINE );
 }
+
 cdf::DataFrame::DataFrameVector cdf::DataFrame::operator[] ( string _idx )
 {
 	return DataFrameVector( *this, _idx, DataFrameVector::COLUMN );
 }
 
 
+/**************************
+********* Private *********
+**************************/
+
+int cdf::DataFrame::find_column ( string _column )
+{
+	for (size_t i = 0; i < dfDimension[0]; i++)
+	{
+		if (_column == dfHeaders[i])
+			return i;
+	}
+
+	return -1;
+}
+
+
 /*************************
 ********* Others *********
 *************************/
+
 void cdf::DataFrame::debugging ()
 {
 	cout << dfFileName << " " << dfDimension[0] << "x" << dfDimension[1] << endl;
@@ -127,11 +146,21 @@ void cdf::DataFrame::debugging ()
 /**********************************
 ********* DataFrameVector *********
 **********************************/
-reference cdf::DataFrame::DataFrameVector::operator[] ( int _idx )
+
+cdf::DataFrame::DataFrameVector ( DataFrame & _dfParent, string _idx, DFVType _dtType )
+{
+	dfParent = _dfParent;
+	dtType = _dtType;
+	idx = dfParent.find_column( _idx );
+}
+
+cdf::DataFrame::reference cdf::DataFrame::DataFrameVector::operator[] ( int _idx )
 {
     return dfParent.dfData[idx][_idx];
 }
-reference cdf::DataFrame::DataFrameVector::operator[] ( string _idx )
+
+cdf::DataFrame::reference cdf::DataFrame::DataFrameVector::operator[] ( string _idx )
 {
-    return dfParent.dfData[idx][_idx];
+	int col = dfParent.find_column( _idx );
+    return dfParent.dfData[idx][col];
 }

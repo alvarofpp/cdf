@@ -25,7 +25,7 @@ namespace cdf
 			class DataFrameVector
 			{
 				friend class DataFrame;
-				enum DFRType
+				enum DFVType
 				{
 					COLUMN = 0,
 					LINE
@@ -33,21 +33,22 @@ namespace cdf
 
 				private:
 					DataFrame& dfParent; // Parent DataFrame
-	        		size_t idx;          // Index, can be reference a row or column
-	        		int dtType;          // Vector type, helping identify if it is row or column
+					size_t idx;          // Index, can be reference a row or column
+					DFVType dtType;      // Vector type, helping identify if it is row or column
 
-	        	public:
-	        		/*
+				public:
+					/*
 					* Constructs and Destructs
 					*/
-					DataFrameVector ( DataFrame & _dfParent, size_t _idx, int _dtType )
+					DataFrameVector ( DataFrame & _dfParent, size_t _idx, DFVType _dtType )
 					: dfParent( _dfParent ), idx( _idx ), dtType( _dtType ) {}
+					DataFrameVector ( DataFrame & _dfParent, string _idx, DFVType _dtType );
 					~DataFrameVector () = default;
 					/*
 					* Operator
 					*/
-	        		reference operator[] ( int _idx );
-	        		reference operator[] ( string _idx );
+					reference operator[] ( int _idx );
+					reference operator[] ( string _idx );
 
 			};
 
@@ -70,6 +71,7 @@ namespace cdf
 			DataFrameVector operator[] ( string _idx );
 		private:
 			void debugging ();
+			int find_column ( string _column );
 	};
 }
 
