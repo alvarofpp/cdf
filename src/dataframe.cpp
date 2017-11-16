@@ -2,7 +2,7 @@
 
 #include <iostream>  // std::cout, std::endl, std::cin
 #include <fstream>   // std::ifstream
-#include <algorithm> // std::count
+#include <algorithm> // std::count, std::for_each
 #include <typeinfo>  // debugging
 
 using namespace std;
@@ -58,10 +58,12 @@ cdf::DataFrame::DataFrame ( string _fileName, char _delimiter )
 	// Alias of size_t
 	std::string::size_type sz;
 	double value;
+
 	while ( getline(csvFile, fileLine) )
 	{
 		dfData.resize( ++dfDimensionY );
 		dfData[ dfDimensionY-1 ].reserve( dfDimension[0] );
+		cout << dfData.size() << endl;
 
 		for (auto i = fileLine.begin(); i < fileLine.end(); i++)
 		{
@@ -86,8 +88,6 @@ cdf::DataFrame::DataFrame ( string _fileName, char _delimiter )
 	}
 	// Save dimension Y
 	dfDimension[1] = dfDimensionY;
-
-	debugging();
 }
 
 
@@ -103,6 +103,83 @@ cdf::DataFrame::DataFrameVector cdf::DataFrame::operator[] ( size_t _idx )
 cdf::DataFrame::DataFrameVector cdf::DataFrame::operator[] ( string _idx )
 {
 	return DataFrameVector( *this, _idx, DataFrameVector::COLUMN );
+}
+
+
+/****************************
+********* Functions *********
+****************************/
+
+bool cdf::DataFrame::drop ( size_t _idx )
+{
+	if (_idx >= dfDimension[1])
+	{
+		cout << cdf::ALERT_BEGIN << "Invalid row index!" << cdf::ALERT_END << endl;
+		return false;
+	}
+
+	for (size_t i = _idx; i < dfDimension[1]-1; i++)
+		dfData[i] = dfData[i+1];
+
+	dfData.resize( --dfDimension[1] );
+
+	return true;
+}
+
+bool cdf::DataFrame::drop ( string _idx )
+{
+	int col = find_column(_idx);
+	if (col == -1)
+	{
+		cout << cdf::ALERT_BEGIN << "Invalid column index!" << cdf::ALERT_END << endl;
+		return false;
+	}
+	// Remove data
+	for (size_t i = 0; i < dfDimension[1]; i++)
+	{
+		for (size_t j = col; j < dfDimension[0]-1; j++)
+			dfData[i][j] = dfData[i][j+1];
+		
+		dfData[i].resize( dfDimension[0]-1 );
+	}
+
+	// Remove header
+	for (size_t j = col; j < dfDimension[0]-1; j++)
+		dfHeaders[j] = dfHeaders[j+1];
+	dfHeaders.resize ( --dfDimension[0] );
+
+	// Resize the dimension if X reaches 0
+	if (dfDimension[0] == 0)
+	{
+		dfData.resize(0);
+		dfDimension[1] = 0;
+	}
+
+	return true;
+}
+
+template< class InputIterator >
+bool drop (InputIterator _first, InputIterator _last)
+{
+	// Test values
+	InputIterator first = _first;
+	while (_first != _last)
+	{
+		if (_first < 0)
+		{
+
+		}
+	}
+
+
+	bool result = false;
+	while (first != _last)
+	{
+		drop(first);
+		++first;
+	}
+
+	return result;
 }
 
 
@@ -146,13 +223,6 @@ void cdf::DataFrame::debugging ()
 /**********************************
 ********* DataFrameVector *********
 **********************************/
-
-cdf::DataFrame::DataFrameVector ( DataFrame & _dfParent, string _idx, DFVType _dtType )
-{
-	dfParent = _dfParent;
-	dtType = _dtType;
-	idx = dfParent.find_column( _idx );
-}
 
 cdf::DataFrame::reference cdf::DataFrame::DataFrameVector::operator[] ( int _idx )
 {

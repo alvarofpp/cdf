@@ -32,9 +32,9 @@ namespace cdf
 				};
 
 				private:
-					DataFrame& dfParent; // Parent DataFrame
-					size_t idx;          // Index, can be reference a row or column
-					DFVType dtType;      // Vector type, helping identify if it is row or column
+					DataFrame & dfParent; // Parent DataFrame
+					size_t idx;           // Index, can be reference a row or column
+					DFVType dtType;       // Vector type, helping identify if it is row or column
 
 				public:
 					/*
@@ -42,7 +42,8 @@ namespace cdf
 					*/
 					DataFrameVector ( DataFrame & _dfParent, size_t _idx, DFVType _dtType )
 					: dfParent( _dfParent ), idx( _idx ), dtType( _dtType ) {}
-					DataFrameVector ( DataFrame & _dfParent, string _idx, DFVType _dtType );
+					DataFrameVector ( DataFrame & _dfParent, string _idx, DFVType _dtType )
+					: dfParent( _dfParent ), dtType( _dtType ) { idx = dfParent.find_column( _idx ); }
 					~DataFrameVector () = default;
 					/*
 					* Operator
@@ -69,8 +70,15 @@ namespace cdf
 			*/
 			DataFrameVector operator[] ( size_t _idx );
 			DataFrameVector operator[] ( string _idx );
-		private:
+			/*
+			* Functions
+			*/
+			bool drop ( size_t _idx );
+			bool drop ( string _idx );
+			template< class InputIterator >
+			bool drop (InputIterator _first, InputIterator _last);
 			void debugging ();
+		private:
 			int find_column ( string _column );
 	};
 }
