@@ -24,7 +24,7 @@ $(BIN): $(OBJS) $(APPOBJ)
 
 $(APPOBJ): $(APP)
 	$(CC) -c -o $@ $< $(CFLAGS)
-    
+
 ${OBJDIR}/%.o: $(SRCDIR)/%.cpp
 	$(CC) -c -o $@ $< $(CFLAGS)
 

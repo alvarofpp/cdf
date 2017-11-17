@@ -63,7 +63,6 @@ cdf::DataFrame::DataFrame ( string _fileName, char _delimiter )
 	{
 		dfData.resize( ++dfDimensionY );
 		dfData[ dfDimensionY-1 ].reserve( dfDimension[0] );
-		cout << dfData.size() << endl;
 
 		for (auto i = fileLine.begin(); i < fileLine.end(); i++)
 		{
@@ -158,30 +157,30 @@ bool cdf::DataFrame::drop ( string _idx )
 	return true;
 }
 
-template< class InputIterator >
-bool drop (InputIterator _first, InputIterator _last)
+
+/*************************
+********* Friend *********
+*************************/
+
+ostream & cdf::operator<< ( ostream & _out, const DataFrame & _df )
 {
-	// Test values
-	InputIterator first = _first;
-	while (_first != _last)
+	// Filename XxY
+	_out << _df.dfFileName << " " << _df.dfDimension[0] << "x" << _df.dfDimension[1] << endl;
+	// Headers
+	_out << ".Headers: ";
+	for (size_t i = 0; i < _df.dfHeaders.size(); i++)
+		_out << _df.dfHeaders[i] << ";";
+	_out << endl << ".Data: " << endl;
+	// Data
+	for (size_t i = 0; i < _df.dfDimension[1]; i++)
 	{
-		if (_first < 0)
-		{
-
-		}
+		for (size_t j = 0; j < _df.dfDimension[0]; j++)
+			_out << _df.dfData[i][j] << ";";
+		_out << endl;
 	}
 
-
-	bool result = false;
-	while (first != _last)
-	{
-		drop(first);
-		++first;
-	}
-
-	return result;
+    return _out;
 }
-
 
 /**************************
 ********* Private *********
@@ -196,41 +195,4 @@ int cdf::DataFrame::find_column ( string _column )
 	}
 
 	return -1;
-}
-
-
-/*************************
-********* Others *********
-*************************/
-
-void cdf::DataFrame::debugging ()
-{
-	cout << dfFileName << " " << dfDimension[0] << "x" << dfDimension[1] << endl;
-	// DEBUGGING
-	cout << ".Headers: ";
-	for (size_t i = 0; i < dfHeaders.size(); i++)
-		cout << dfHeaders[i] << ";";
-	cout << endl << ".Data: " << endl;
-	for (size_t i = 0; i < dfDimension[1]; i++)
-	{
-		for (size_t j = 0; j < dfDimension[0]; j++)
-			cout << dfData[i][j] << ";";
-		cout << endl;
-	}
-}
-
-
-/**********************************
-********* DataFrameVector *********
-**********************************/
-
-cdf::DataFrame::reference cdf::DataFrame::DataFrameVector::operator[] ( int _idx )
-{
-    return dfParent.dfData[idx][_idx];
-}
-
-cdf::DataFrame::reference cdf::DataFrame::DataFrameVector::operator[] ( string _idx )
-{
-	int col = dfParent.find_column( _idx );
-    return dfParent.dfData[idx][col];
 }

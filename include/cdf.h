@@ -75,12 +75,18 @@ namespace cdf
 			*/
 			bool drop ( size_t _idx );
 			bool drop ( string _idx );
-			template< class InputIterator >
-			bool drop (InputIterator _first, InputIterator _last);
-			void debugging ();
+			/*
+			* Friend
+			*/
+    		friend ostream & operator<< ( ostream &, const DataFrame & );
+    		
 		private:
 			int find_column ( string _column );
 	};
+
+ostream & operator<< ( ostream & _out, const DataFrame & _df );
+
 }
+
 
 #endif /* __CDF_H__ */
