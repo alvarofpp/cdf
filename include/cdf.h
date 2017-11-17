@@ -24,7 +24,6 @@ namespace cdf
 
 			class DataFrameVector
 			{
-				friend class DataFrame;
 				enum DFVType
 				{
 					COLUMN = 0,
@@ -51,11 +50,14 @@ namespace cdf
 					reference operator[] ( int _idx );
 					reference operator[] ( string _idx );
 
+
+				friend class DataFrame;
 			};
 
 		private:
+			char dfDelimiter;                   // Delimiter
 			string dfFileName;                  // Filename
-			size_t dfDimension[2];              // Dimensions X and Y
+			size_t dfRows, dfCols;              // Rows and columns
 			vector< string > dfHeaders;         // CSV File headers
 			vector< vector< double > > dfData;  // CSV File data
 
@@ -71,22 +73,27 @@ namespace cdf
 			DataFrameVector operator[] ( size_t _idx );
 			DataFrameVector operator[] ( string _idx );
 			/*
-			* Functions
+			* CRUD functions
 			*/
 			bool drop ( size_t _idx );
 			bool drop ( string _idx );
+			/*
+			* Display functions
+			*/
+			void head ( size_t _n = 5 );
+			void tail ( size_t _n = 5 );
 			/*
 			* Friend
 			*/
     		friend ostream & operator<< ( ostream &, const DataFrame & );
     		
 		private:
+			void print_alert ( string _msg );
 			int find_column ( string _column );
 	};
 
 ostream & operator<< ( ostream & _out, const DataFrame & _df );
 
 }
-
 
 #endif /* __CDF_H__ */

@@ -6,12 +6,12 @@
 
 using namespace std;
 
-int main(int argc, char * argv[])
+int main( int argc, char * argv[] )
 {
 	string fileName = "data/simple.csv";
 	cdf::DataFrame cdf = cdf::DataFrame(fileName, ';');
-	cout << cdf;
-	cout << endl;
+	cout << cdf << endl;
+	cdf.tail(2);
 
     return EXIT_SUCCESS;
 }

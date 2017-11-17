@@ -1,7 +1,5 @@
 #include "cdf.h"
 
-using namespace std;
-
 
 /***************************
 ********* Operator *********
